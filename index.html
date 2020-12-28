@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--Willem Wantenaar - 991512290-->
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Willem Wantenaar</title>
+    <link rel="stylesheet" href="css/wantenaw.css">
+
+    <script type="text/javascript" src=js/jquery.js></script>
+    <script type="text/javascript" src=js/wantenaw.js></script>
+
+    <script>
+        $(document).ready(function () {
+            // arrays of keys and values from json
+            var personalInfoKeys = ["fullName", "studentNumber", "loginName", "sheridanProgram", "homeCountry"];
+            var personalInfoValues = new Array();
+            // array of animals and animal types
+            var animalClasses = new Array();
+            var animals = new Array();
+            myStorage = window.localStorage;
+
+            // PERSONAL INFO
+            // obtaining personal info from json and pushing into local storage
+            $.getJSON("data/A2-JSONFile.json", function (personalInfo) {
+                personalInfoValues[0] = personalInfo.personalInfo.fullName;
+                personalInfoValues[1] = personalInfo.personalInfo.studentNumber;
+                personalInfoValues[2] = personalInfo.personalInfo.loginName;
+                personalInfoValues[3] = personalInfo.personalInfo.sheridanProgram;
+                personalInfoValues[4] = personalInfo.personalInfo.homeCountry;
+                // push to local storage
+                for (var temp = 0; temp <= 4; temp++) {
+                    var tempKey = personalInfoKeys[temp];
+                    var tempValue = personalInfoValues[temp];
+                    localStorage.setItem(tempKey, tempValue);
+                }
+                // building footer text from json variables
+                let footerText = footFunction();
+                function footFunction() {
+                    return `<hr><h4> My Sheridan Program is ${personalInfoValues[3]}</h4><h5>My Home Country is ${personalInfoValues[4]}</h5>`;
+                }
+                $('#footerText').html(footerText);
+            })
+
+            // ANIMAL TYPES
+            // get animal types from json an enter into array
+            $.getJSON("data/A2-JSONFile.json", function (animaltypes) {
+                // createclass to hold animal type values
+                class AnimalClasses {
+                    constructor(aType, pic) {
+                        this.aType = aType;
+                        this.pic = pic;
+                    }
+                }
+                // shuffle through json and add values to array through the AnimalClasses class
+                for (let animalType of animaltypes.animaltypes) {
+                    newRec = new AnimalClasses(
+                        animalType.atype,
+                        animalType["pic"]
+                    );
+                    animalClasses.push(newRec);
+                }
+                var count = 0;
+                // pushing to local storage
+                for (let temp of animalClasses) {
+                    count = count + 1;
+                    var tempKey = "ANIMAL TYPE #" + count.toString();
+                    var tempValue = temp;
+                    localStorage.setItem(tempKey, JSON.stringify(tempValue));                
+                }
+                // building image row
+                let imageRow = imgFunction();
+                function imgFunction() {
+                    var imgString = "";
+                    for (let temp of animalClasses) {
+                        var tempString = " ";
+                        tempString = "<td><img id='" + temp.aType + "'src='" + temp.pic + "'/></td>";
+                        var newString = imgString.concat(tempString);
+                        imgString = newString;
+                    }
+                    return `${imgString}`;
+                }
+                $('#imageRow').html(imageRow);
+            })
+            
+            // ANIMALS    
+            $.getJSON("data/A2-JSONFile.json", function (animallist) {
+                // createclass to hold animal type values
+                class Animal {
+                    constructor(name, type, legs, colors, photoUrl) {
+                        this.name = name;
+                        this.type = type;
+                        this.legs = legs;
+                        this.colors = colors;
+                        this.photoUrl = photoUrl;
+                    }
+                }
+                // shuffle through json and add values to array through the AnimalClasses class
+                for (let animal of animallist.animallist) {
+                    newRec = new Animal(
+                        animal.name,
+                        animal.type,
+                        animal["legs"],
+                        animal["colors"],
+                        animal["photoUrl"]
+                    );
+                    animals.push(newRec);
+                }
+                var count = 0;
+                // pushing to local storage
+                for (let temp of animals) {
+                    count = count + 1;
+                    var tempKey = "ANIMAL #" + count.toString();
+                    var tempValue = temp;
+                    localStorage.setItem(tempKey, JSON.stringify(tempValue));
+                }
+            })
+            // Obtaining header information from wantenaw.js and using jquery.js to overwrite default header
+            $("#headerText").html(headerText);
+
+            
+		});
+		function mRedirect() {
+			localStorage.setItem("ButtonVariable", "Mammal");
+			window.location.href = "pages/secondPage.html";
+		}
+		function rRedirect() {
+			localStorage.setItem("ButtonVariable", "Reptile");
+			window.location.href = "pages/secondPage.html";
+		}
+		function bRedirect() {
+			localStorage.setItem("ButtonVariable", "Bird");
+			window.location.href = "pages/secondPage.html";
+		}
+		function aRedirect() {
+			localStorage.setItem("ButtonVariable", "Amphibian");
+			window.location.href = "pages/secondPage.html";
+		}
+		function fRedirect() {
+			localStorage.setItem("ButtonVariable", "Fish");
+			window.location.href = "pages/secondPage.html";
+		}
+
+    </script>
+
+</head>
+<body>
+    <header>
+        <section id="headerText"></section>
+    </header>
+
+    <!-- Table to hold main page content-->
+    <table>
+        <a>Click a button to display all animals for the animal type</a>
+        <br>
+        <tr>
+            <td><button id="Mammel" onclick="mRedirect()">Mammel</button></td>
+            <td><button id="Reptile" onclick="rRedirect()">Reptile</button></td>
+            <td><button id="Bird" onclick="bRedirect()">Bird</button></td>
+            <td><button id="Amphibian" onclick="aRedirect()">Amphibian</button></td>
+            <td><button id="Fish" onclick="fRedirect()">Fish</button></td>
+        </tr>
+        <tr id="imageRow">
+            
+        </tr>
+
+    </table>
+
+    <footer>
+        <section id="footerText"></section>
+    </footer>
+</body>

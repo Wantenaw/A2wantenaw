@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--Willem Wantenaar - 991512290-->
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Willem Wantenaar</title>
+    <link rel="stylesheet" href="../css/secondPage.css">
+
+    <script type="text/javascript" src=../js/jquery.js></script>
+    <script type="text/javascript" src=../js/secondPage.js></script>
+
+    <script>
+        var x = localStorage.getItem("ButtonVariable");
+        $(document).ready(function () {
+            // Obtaining header information from wantenaw.js and using jquery.js to overwrite default header
+            $("#headerText").html(headerText);
+            myStorage = window.localStorage;
+            var personalInfoValues = new Array();
+            // PERSONAL INFO
+            // obtaining personal info from json and pushing into local storage
+            $.getJSON("../data/A2-JSONFile.json", function (personalInfo) {
+                personalInfoValues[0] = personalInfo.personalInfo.fullName;
+                personalInfoValues[1] = personalInfo.personalInfo.studentNumber;
+                personalInfoValues[2] = personalInfo.personalInfo.loginName;
+                personalInfoValues[3] = personalInfo.personalInfo.sheridanProgram;
+                personalInfoValues[4] = personalInfo.personalInfo.homeCountry;
+                // building footer text from json variables
+                let footerText = footFunction();
+                function footFunction() {
+                    return `<hr><h4> My Sheridan Program is ${personalInfoValues[3]}</h4><h5>My Home Country is ${personalInfoValues[4]}</h5>`;
+                }
+                $("#footerText").html(footerText);
+            })
+            // retrieve button clicked from local storage
+            let title = titleFunction();
+            function titleFunction() {
+                return `<h4> ${x} </h4>`;
+            }
+            $("#aType").html(title);
+
+            // search animals for matching classification
+            class Animal {
+                constructor(name, type, legs, colors, photoUrl) {
+                    this.name = name;
+                    this.type = type;
+                    this.legs = legs;
+                    this.colors = colors;
+                    this.photoUrl = photoUrl;
+                }
+            }
+            var matchingAnimals = new Array();
+            for(var temp = 1 ; temp <= 58 ; temp++){
+                var animalLookup = "ANIMAL #" + temp.toString();
+                var tempAnimal = localStorage.getItem(animalLookup);
+                var animal = JSON.parse(tempAnimal);
+                var tempType = animal.type;
+                if ((tempType.toUpperCase()) === (x.toUpperCase())){
+                    matchingAnimals.push(animal);
+                }
+            }
+            // putting matching into table data
+            let matching = matchFunction();
+            function matchFunction() {
+                var matchString = "";
+                for (var temp = 0; temp <= matchingAnimals.length - 1; temp++) {
+                    var tempString = "";
+                    tempString = "<tr id='images'><td>" + (matchingAnimals[temp].name) + "</td> <td><img src='"
+                         + (matchingAnimals[temp].photoUrl) + "'/></td></tr><br>";
+                    var newString = matchString.concat(tempString);
+                    matchString = newString;
+                }
+                return `${matchString}`;
+            }
+            $("#matching").html(matching);
+        })
+        function returnButton() {
+            localStorage.setItem("ButtonVariable", "");
+            window.location.href = "../index.html";
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <section id="headerText"></section>
+    </header>
+    
+    <p id="aType"></p>
+
+    <table id="matching">
+
+    </table>
+    
+    <button onclick="returnButton()">Return</button>
+    
+    <footer>
+        <section id="footerText"></section>
+    </footer>
+</body>

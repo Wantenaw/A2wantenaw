@@ -1,0 +1,19 @@
+body{
+    text-align: center;
+}
+#images{
+    border: thin solid black;
+    margin-bottom: 10px;
+    display: inline-block;
+    width:600px;
+    text-align: center;
+}
+td{
+    width: 300px;
+}
+img{
+    margin-left: auto;
+    margin-right: auto;
+    height: 80px;
+    width: auto;
+}
